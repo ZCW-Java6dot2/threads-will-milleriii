@@ -1,4 +1,4 @@
-public class EventListener {
+public class EventListener extends Thread {
 
     private String messageToListenFor;
     private String messageToReplyWith;
@@ -20,13 +20,16 @@ public class EventListener {
     }
 
     public Boolean readyToQuit() {
-        return null;
+        return true;
     }
 
     public Boolean shouldReply() {
-        return null;
+        return true;
     }
 
     public void reply() {
+        eventTracker.handle(messageToListenFor,() -> {
+            System.out.println(messageToReplyWith);
+        });
     }
 }
