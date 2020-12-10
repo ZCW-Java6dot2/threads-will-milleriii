@@ -12,7 +12,10 @@ public class EventTracker implements Tracker {
     }
 
     synchronized public static EventTracker getInstance() {
-        return new EventTracker();
+        if (INSTANCE == null) {
+            INSTANCE = new EventTracker();
+        }
+        return INSTANCE;
     }
 
     synchronized public void push(String message) {
@@ -20,14 +23,23 @@ public class EventTracker implements Tracker {
         tracker.put(message, x+1);
     }
 
+    @Override
     synchronized public Boolean has(String message) {
         Integer x = tracker.getOrDefault(message, 0);
         return tracker.containsKey(message) && x > 0;
     }
 
+    @Override
     synchronized public void handle(String message, EventHandler e) {
-        Integer x = tracker.getOrDefault(message, 0);
-        tracker.put(message, x - 1);
+        try {
+
+
+            e.handle();
+            Integer x = tracker.getOrDefault(message, 0);
+            tracker.put(message, x - 1);
+        } catch (NullPointerException n){
+            System.out.println("Message not found");
+        }
     }
 
     public Map<String, Integer> getTracker() {
@@ -38,6 +50,6 @@ public class EventTracker implements Tracker {
     // Do not use this. This constructor is for tests only
     // Using it breaks the singleton class
     EventTracker(Map<String, Integer> tracker) {
-        this.tracker = tracker;
+         this.tracker = tracker;
     }
 }

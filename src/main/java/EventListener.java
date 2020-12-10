@@ -17,14 +17,21 @@ public class EventListener extends Thread {
     }
 
     public void run() {
+        while (!readyToQuit()) {
+
+                if (shouldReply()) {
+                    reply();
+                }
+            }
+
     }
 
     public Boolean readyToQuit() {
-        return true;
+        return eventTracker.has("Quit");
     }
 
     public Boolean shouldReply() {
-        return true;
+        return eventTracker.has(messageToListenFor);
     }
 
     public void reply() {
